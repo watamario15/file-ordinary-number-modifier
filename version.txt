@@ -1,0 +1,12 @@
+; 行の先頭部分に「;」（半角セミコロン）を付けると、その行はスキップします。
+_FILEVERSION=1.1.0.0
+_PRODUCTVERSION=1.1.0.0
+Comments=ファイルの連番部分を一括で編集できます。
+CompanyName=watamario15
+FileDescription=連番一括編集
+FileVersion=1.1
+InternalName=おなまえ変更
+LegalCopyright=Public Domain (CC0-1.0)
+OriginalFilename=filenumbers.exe
+ProductName=連番一括編集
+ProductVersion=1.1

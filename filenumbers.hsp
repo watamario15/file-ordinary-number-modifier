@@ -1,0 +1,69 @@
+#include "hspext.as"
+#packopt name "filenumbers.exe"
+#packopt icon "app.ico"
+#packopt version "version.txt"
+	extensions="*" : figure=2 : path=dir_cur
+	exist "hspext.dll"
+	if strsize==-1 : dialog {"
+							ファイル名変更に使用するファイル(hspext.dll)が見つかりません｡
+							移動､削除、名前の変更等をした場合は、
+							この実行ファイルと同じディレクトリにhspext.dllとして復元してください｡
+							hspext.dllを紛失した場合は､このプログラムの完全版を再取得してください｡
+							"},1,"エラー" : end
+*entry
+	title "指定範囲のファイル名の連番を一括編集"
+	mes "ファイル名先頭の番号を一挙に操作します｡音楽ファイルの整理に便利です。"
+	mes "操作を元に戻す機能はないので、"
+	mes "付属のSandboxフォルダで十分に挙動を確認してからご使用ください。\n"
+	mes "操作対象のパス:"
+	objmode 2 : font "",16
+	input path,640,32,1024
+	mes "\n範囲:"
+	input top,64,32
+	pos 72,ginfo_cy-32 : mes "～"
+	pos 96,ginfo_cy-16 : input last,64,32
+	pos ginfo_cx+96,ginfo_cy-48 : mes "変更幅:" : input change,64,32
+	pos ginfo_cx+96,ginfo_cy-48 : mes "桁数:" : input figure,64,32
+	pos ginfo_cx+96,ginfo_cy-48 : mes "拡張子:" : input extensions,64,32
+	objsize 64,32
+	pos ginfo_cx+128,ginfo_cy-32 : button "CLEAR",*clear
+	pos ginfo_cx+64,ginfo_cy-32 : button "START!",*search
+	pos 0,ginfo_cy+16
+	mes "ログ："
+	stop
+
+*search
+	dirlist filelist,path,5
+	if stat==0 : dialog "指定されたディレクトリが見つかりません。\n正しくパスを入力したかもう一度確認してください｡",1,"エラー" : stop
+	if vartype(top)!=4 || vartype(last)!=4 || vartype(change)!=4 : dialog "範囲、変更幅には整数を入力してください。",1,"エラー" : stop
+	if figure<1 || vartype(figure)!=4 : dialog "桁数には1以上の整数を入力してください｡",1,"エラー" : stop
+	chdir path
+	dirlist filelist,extensions,1
+	notesel filelist
+	mes "処理中です。しばらくお待ち下さい..."
+	repeat noteinfo(0)
+		noteget file,cnt
+		getstr num,file,0,' '
+		deltms=strsize-1
+		skip = 0
+		repeat deltms
+			if peek(num,cnt) < '0' || peek(num,cnt) > '9' : skip = 1 : break
+		loop
+		if skip == 1 : continue
+		num=int(num)+change
+		bango=str(num)
+		if num-change>=top && num-change<=last{
+			fig=1
+			repeat figure-1
+				fig*=10
+				if num<fig : bango="0"+bango
+			loop
+			fxren file,bango+strmid(file,deltms,65535)
+		}
+	loop
+	print "処理は正常に完了しました。\n"
+	stop
+
+*clear
+	cls
+	goto *entry
