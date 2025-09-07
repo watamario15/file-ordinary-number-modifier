@@ -1,0 +1,9 @@
+Sandbox/
+hsptmp
+obj
+packfile
+*.ax
+*.dpm
+*.exe
+*.dll
+*.i
